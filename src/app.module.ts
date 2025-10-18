@@ -16,6 +16,7 @@ import { EstrategiaEnsenanzaModule } from './estrategias_enseñanza/estrategias_
 import { MateriasModule } from './materias/materias.module';
 import { AdministradorModule } from './administrador/administrador.module';
 import { ConfigModule } from '@nestjs/config';
+import { UnidadesModule } from './unidades/unidades.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { ConfigModule } from '@nestjs/config';
     EstrategiaEnsenanzaModule,
     MateriasModule,
     AdministradorModule,
+    UnidadesModule,
   ],
   controllers: [AppController],
   providers: [AppService],
