@@ -1,0 +1,42 @@
+import { Controller, Get, Post, Body, Param, BadRequestException } from '@nestjs/common';
+import { GenericController } from 'src/generic/generic.controller';
+import { ObjetosAprendizaje } from '../entities/objetos_aprendizaje.entity';
+import { ObjetosAprendizajeService } from '../services/objetos-aprendizaje.service';
+
+@Controller('objetos-aprendizaje')
+export class ObjetosAprendizajeController extends GenericController<ObjetosAprendizaje, ObjetosAprendizajeService> {
+    constructor(private readonly objetosAprendizajeService: ObjetosAprendizajeService) {
+        super(objetosAprendizajeService);
+    }
+
+    @Get()
+    async findAll(): Promise<ObjetosAprendizaje[]> {
+        return this.objetosAprendizajeService.find();
+    }
+
+    @Post()
+    async create(@Body() entity: ObjetosAprendizaje) {
+        const count = await this.objetosAprendizajeService.countByTemaId(entity.id_tema);
+        
+        if (count >= 3) {
+        throw new BadRequestException('Un tema no puede tener más de 3 objetos de aprendizaje');
+        }
+
+        if (entity.orden < 1 || entity.orden > 3) {
+        throw new BadRequestException('El orden debe estar entre 1 y 3');
+        }
+
+        return this.objetosAprendizajeService.create(entity);
+    }
+
+    @Get('tema/:idTema')
+    async findByTema(@Param('idTema') idTema: number): Promise<ObjetosAprendizaje[]> {
+        return this.objetosAprendizajeService.findByTemaId(idTema);
+    }
+
+    @Get('tema/:idTema/count')
+    async countByTema(@Param('idTema') idTema: number): Promise<{ count: number }> {
+        const count = await this.objetosAprendizajeService.countByTemaId(idTema);
+        return { count };
+    }
+}

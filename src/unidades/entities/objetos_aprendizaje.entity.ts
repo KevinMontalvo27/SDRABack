@@ -21,4 +21,7 @@ export class ObjetosAprendizaje extends GenericEntity {
 
     @Column({type: 'varchar'})
     contenido: string;
+
+    @Column({ type: 'int', default: 1 })
+    orden: number;
 }
