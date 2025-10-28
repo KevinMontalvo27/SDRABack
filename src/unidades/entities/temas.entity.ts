@@ -15,7 +15,7 @@ export class Temas extends GenericEntity {
     nombre: string;
 
     @Column({ type: 'varchar' })
-    descripcion_tema: string;
+    descripcion: string;
 
     @Column({ type: 'int' })
     numero_tema: number;
