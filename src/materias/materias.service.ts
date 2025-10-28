@@ -12,4 +12,13 @@ export class MateriasService extends GenericService<Materia> {
   ) {
     super(materiasRepository);
   }
+
+  // OPCIÓN 1B: Si agregas campo grupo a Materia
+  async findMateriasByGrupo(grupo: number): Promise<Materia[]> {
+    return this.materiasRepository.find({
+      where: { grupo: grupo },
+      order: { nombre: 'ASC' },
+    });
+  }
 }
+
