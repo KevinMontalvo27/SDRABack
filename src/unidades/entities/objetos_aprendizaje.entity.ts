@@ -1,6 +1,7 @@
 import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, JoinColumn } from 'typeorm';
 import { GenericEntity } from 'src/generic/generic.entity';
 import { Temas } from './temas.entity';
+import { EstiloObjeto } from './estilo_objeto.entity';
 
 @Entity()
 export class ObjetosAprendizaje extends GenericEntity {
@@ -22,6 +23,12 @@ export class ObjetosAprendizaje extends GenericEntity {
     @Column({type: 'varchar'})
     contenido: string;
 
-    @Column({ type: 'int', default: 1 })
-    orden: number;
+    // Relación con Tema
+    @ManyToOne(() => Temas)
+    @JoinColumn({ name: 'id_tema', referencedColumnName: 'id' })
+    tema: Temas;
+        // Relación con EstiloObjeto
+    @ManyToOne(() => EstiloObjeto, { nullable: true, onDelete: 'SET NULL' })
+    @JoinColumn({ name: 'id_type', referencedColumnName: 'id' })
+    estiloObjeto: EstiloObjeto;
 }
