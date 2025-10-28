@@ -15,19 +15,14 @@ export class ObjetosAprendizajeService extends GenericService<ObjetosAprendizaje
 
     async findByTemaId(idTema: number): Promise<ObjetosAprendizaje[]> {
         return this.objetosAprendizajeRepository.find({
-        where: { id_tema: idTema },
-        order: { orden: 'ASC' }
+            where: { id_tema: idTema },
+            relations: ['estiloObjeto']
         });
     }
 
     async countByTemaId(idTema: number): Promise<number> {
         return this.objetosAprendizajeRepository.count({
-        where: { id_tema: idTema }
+            where: { id_tema: idTema }
         });
-    }
-
-    async validateOrden(idTema: number, orden: number): Promise<boolean> {
-        const count = await this.countByTemaId(idTema);
-        return count < 3 && orden >= 1 && orden <= 3;
     }
 }
