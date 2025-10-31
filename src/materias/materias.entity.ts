@@ -18,4 +18,7 @@ export class Materia extends GenericEntity{
   @OneToMany(() => Unidades, unidad => unidad.materia)
   unidades: Unidades[];
 
+  @Column({ type: 'int', nullable: true })
+  grupo: number;
+
 }

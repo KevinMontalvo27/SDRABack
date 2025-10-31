@@ -1,4 +1,4 @@
-import { Controller } from '@nestjs/common';
+import { Controller, Get, Param } from '@nestjs/common';
 import { GenericController } from 'src/generic/generic.controller';
 import { Materia } from './materias.entity';
 import { MateriasService } from './materias.service';
@@ -7,5 +7,10 @@ import { MateriasService } from './materias.service';
 export class MateriasController extends GenericController<Materia, MateriasService> {
   constructor(private readonly materiasService: MateriasService) {
     super(materiasService);
+  }
+
+  @Get('grupo/:grupo')
+  async getMateriasByGrupo(@Param('grupo') grupo: number): Promise<Materia[]> {
+    return this.materiasService.findMateriasByGrupo(grupo);
   }
 }

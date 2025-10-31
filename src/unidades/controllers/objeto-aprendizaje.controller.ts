@@ -19,11 +19,7 @@ export class ObjetosAprendizajeController extends GenericController<ObjetosApren
         const count = await this.objetosAprendizajeService.countByTemaId(entity.id_tema);
         
         if (count >= 3) {
-        throw new BadRequestException('Un tema no puede tener más de 3 objetos de aprendizaje');
-        }
-
-        if (entity.orden < 1 || entity.orden > 3) {
-        throw new BadRequestException('El orden debe estar entre 1 y 3');
+            throw new BadRequestException('Un tema no puede tener más de 3 objetos de aprendizaje');
         }
 
         return this.objetosAprendizajeService.create(entity);

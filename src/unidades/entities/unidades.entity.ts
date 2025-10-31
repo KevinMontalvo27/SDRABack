@@ -16,7 +16,7 @@ export class Unidades extends GenericEntity {
     nombre: string;
 
     @Column({ type: 'varchar' })
-    descripcion_unidad: string;
+    descripcion: string;
 
     @Column({ type: 'int' })
     numero_unidad: number;
