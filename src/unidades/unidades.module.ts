@@ -17,6 +17,7 @@ import { EstiloObjeto } from './entities/estilo_objeto.entity';
     imports: [TypeOrmModule.forFeature([Unidades, Temas, ObjetosAprendizaje, EstiloObjeto])],
     controllers: [UnidadesController, TemasController, ObjetosAprendizajeController, EstiloObjetoController],
     providers: [UnidadesService, TemasService, ObjetosAprendizajeService, EstiloObjetoService],
+    exports: [UnidadesService, TemasService, ObjetosAprendizajeService, EstiloObjetoService],
 
 })
 export class UnidadesModule {
