@@ -41,12 +41,24 @@ export class ClodunaryService {
      * Elimina un archivo de Cloudinary usando su public_id
      * @params publicId - ID público del archivo en Cloudinary
      */
-
     async deleteFile(publicId: string): Promise<void> {
         try{
             await cloudinary.uploader.destroy(publicId);
         } catch (error) {
             throw new Error(`Error al eliminar el archivo: ${error.message}`);
         }
+    }
+
+    /**
+     * Extrae el public_id de una URL de Cloudinary
+     * @params url - URL del archivo en Cloudinary
+     * @returns public_id del archivo
+     */
+    extractPublicId(url: string): string{
+        const parts = url.split('/');
+        const fileWithExtension = parts[parts.length - 1];
+        const publicId = fileWithExtension.split('.')[0];
+        const folder = parts[parts.length - 2];
+        return `${folder}/${publicId}`;
     }
 }
