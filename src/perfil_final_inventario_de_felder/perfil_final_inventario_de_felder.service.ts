@@ -207,43 +207,54 @@ export class PerfilFinalInventarioDeFelderService extends GenericService<PerfilF
       };
     }
 
-    // 4. Obtener el estilo más dominante (el de mayor puntaje)
-    const estiloDominante = estilosEstudiante[0].estilo;
 
-    // 5. Calcular compatibilidad solo para objetos que contengan el estilo dominante
-    const recomendaciones: RecomendacionObjetoDto[] = [];
+    // 4. Buscar objetos compatibles por cada estilo en orden de dominancia
+    const objetosEncontrados: RecomendacionObjetoDto[] = [];
+    let estiloUsado: string | null = null;
 
-    for (const objeto of objetos) {
-      if (objeto.estiloObjeto && objeto.estiloObjeto.estilos) {
-        const estilosObjeto = objeto.estiloObjeto.estilos;
+    for(const estiloInfo of estilosEstudiante) {
+      const estiloBuscado = estiloInfo.estilo;
+      const objetosCompatibles: RecomendacionObjetoDto[] = [];
+
+      //Buscar objetos que contengan este estilo
+      for (const objeto of objetos) {
+        if (objeto.estiloObjeto && objeto.estiloObjeto.estilos) {
+          const estilosObjeto = objeto.estiloObjeto.estilos;
         
-        // Solo considerar objetos que contengan el estilo dominante
-        if (estilosObjeto.includes(estiloDominante)) {
-          const compatibilidad = this.calcularCompatibilidad(estilosEstudiante, estilosObjeto);
+          // Verificar si el objeto incluye el estilo buscado
+          if (estilosObjeto.includes(estiloBuscado)) {
+            const compatibilidad = this.calcularCompatibilidad(estilosEstudiante, estilosObjeto);
 
-          const estilosCompatibles = estilosEstudiante
-            .filter(e => estilosObjeto.includes(e.estilo))
-            .map(e => e.estilo);
+            const estilosCompatibles = estilosEstudiante
+              .filter(e => estilosObjeto.includes(e.estilo))
+              .map(e => e.estilo);
 
-          recomendaciones.push({
-            objeto,
-            compatibilidad,
-            estilosCompatibles
-          });
+            objetosCompatibles.push({
+              objeto,
+              compatibilidad,
+              estilosCompatibles
+            });
+          }
         }
+      }
+
+      //Si encontramos objetos con este estilo, los usamos y salimos del ciclo
+      if (objetosCompatibles.length > 0) {
+        objetosEncontrados.push(...objetosCompatibles);
+        estiloUsado = estiloBuscado;
+        break;
       }
     }
 
+
     // 6. Ordenar por compatibilidad y tomar solo el mejor
-    recomendaciones.sort((a, b) => b.compatibilidad - a.compatibilidad);
+    objetosEncontrados.sort((a, b) => b.compatibilidad - a.compatibilidad);
     
-    // Tomar solo el objeto con mayor compatibilidad
-    const mejorObjeto = recomendaciones.length > 0 ? [recomendaciones[0]] : [];
 
     // 7. Preparar respuesta con el mejor objeto
-    if (recomendaciones.length === 0) {
+    if (objetosEncontrados.length === 0) {
       return {
-        mensaje: `No se encontraron objetos de aprendizaje que coincidan con tu estilo dominante (${estiloDominante}) para este tema`,
+        mensaje: `No se encontraron objetos de aprendizaje compatibles con tus estilos de aprendizaje.`,
         objetos: [],
         totalCompatibles: 0,
         estilosEstudiante: nombresEstilos
@@ -251,9 +262,9 @@ export class PerfilFinalInventarioDeFelderService extends GenericService<PerfilF
     }
 
     return {
-      mensaje: `Se encontró el objeto de aprendizaje más compatible con tu estilo dominante (${estiloDominante})`,
-      objetos: mejorObjeto,
-      totalCompatibles: 1,
+      mensaje: `Se encontraron ${objetosEncontrados.length} objeto(s) de aprendizaje compatible(s) con tu estilo (${estiloUsado})`,
+      objetos: objetosEncontrados,
+      totalCompatibles: objetosEncontrados.length,
       estilosEstudiante: nombresEstilos
     };
   }
