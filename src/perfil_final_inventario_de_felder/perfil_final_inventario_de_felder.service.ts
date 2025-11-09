@@ -98,7 +98,7 @@ export class PerfilFinalInventarioDeFelderService extends GenericService<PerfilF
     return estrategiasLimitadas;
   }
 
-  // ===== ALGORITMO DE RECOMENDACIÓN =====
+    // ===== ALGORITMO DE RECOMENDACIÓN =====
 
   /**
    * Extrae los estilos de aprendizaje dominantes del perfil del estudiante
@@ -207,16 +207,20 @@ export class PerfilFinalInventarioDeFelderService extends GenericService<PerfilF
       };
     }
 
-    // 4. Calcular compatibilidad para cada objeto
+    // 4. Obtener el estilo más dominante (el de mayor puntaje)
+    const estiloDominante = estilosEstudiante[0].estilo;
+
+    // 5. Calcular compatibilidad solo para objetos que contengan el estilo dominante
     const recomendaciones: RecomendacionObjetoDto[] = [];
 
     for (const objeto of objetos) {
       if (objeto.estiloObjeto && objeto.estiloObjeto.estilos) {
         const estilosObjeto = objeto.estiloObjeto.estilos;
-        const compatibilidad = this.calcularCompatibilidad(estilosEstudiante, estilosObjeto);
+        
+        // Solo considerar objetos que contengan el estilo dominante
+        if (estilosObjeto.includes(estiloDominante)) {
+          const compatibilidad = this.calcularCompatibilidad(estilosEstudiante, estilosObjeto);
 
-        // Solo incluir objetos con alguna compatibilidad
-        if (compatibilidad > 0) {
           const estilosCompatibles = estilosEstudiante
             .filter(e => estilosObjeto.includes(e.estilo))
             .map(e => e.estilo);
@@ -230,42 +234,26 @@ export class PerfilFinalInventarioDeFelderService extends GenericService<PerfilF
       }
     }
 
-    // 5. Ordenar por compatibilidad
+    // 6. Ordenar por compatibilidad y tomar solo el mejor
     recomendaciones.sort((a, b) => b.compatibilidad - a.compatibilidad);
+    
+    // Tomar solo el objeto con mayor compatibilidad
+    const mejorObjeto = recomendaciones.length > 0 ? [recomendaciones[0]] : [];
 
-    // 6. Preparar respuesta según cantidad de objetos compatibles
+    // 7. Preparar respuesta con el mejor objeto
     if (recomendaciones.length === 0) {
       return {
-        mensaje: 'No se encontraron objetos de aprendizaje compatibles con tu perfil para este tema',
+        mensaje: `No se encontraron objetos de aprendizaje que coincidan con tu estilo dominante (${estiloDominante}) para este tema`,
         objetos: [],
         totalCompatibles: 0,
         estilosEstudiante: nombresEstilos
       };
     }
 
-    if (recomendaciones.length === 1) {
-      return {
-        mensaje: 'Se encontró 1 objeto de aprendizaje compatible con tu perfil',
-        objetos: recomendaciones,
-        totalCompatibles: 1,
-        estilosEstudiante: nombresEstilos
-      };
-    }
-
-    if (recomendaciones.length === 2) {
-      return {
-        mensaje: 'Se encontraron 2 objetos de aprendizaje compatibles con tu perfil',
-        objetos: recomendaciones,
-        totalCompatibles: 2,
-        estilosEstudiante: nombresEstilos
-      };
-    }
-
-    // Si hay 3 o más, devolver todos los compatibles
     return {
-      mensaje: `Se encontraron ${recomendaciones.length} objetos de aprendizaje compatibles con tu perfil`,
-      objetos: recomendaciones,
-      totalCompatibles: recomendaciones.length,
+      mensaje: `Se encontró el objeto de aprendizaje más compatible con tu estilo dominante (${estiloDominante})`,
+      objetos: mejorObjeto,
+      totalCompatibles: 1,
       estilosEstudiante: nombresEstilos
     };
   }
