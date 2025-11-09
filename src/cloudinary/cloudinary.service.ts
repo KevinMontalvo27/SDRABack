@@ -37,4 +37,16 @@ export class ClodunaryService {
         });
     }
 
+    /**
+     * Elimina un archivo de Cloudinary usando su public_id
+     * @params publicId - ID público del archivo en Cloudinary
+     */
+
+    async deleteFile(publicId: string): Promise<void> {
+        try{
+            await cloudinary.uploader.destroy(publicId);
+        } catch (error) {
+            throw new Error(`Error al eliminar el archivo: ${error.message}`);
+        }
+    }
 }
