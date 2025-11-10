@@ -3,7 +3,7 @@ import { UploadApiErrorResponse, UploadApiResponse, v2 as cloudinary } from 'clo
 import * as streamifier from 'streamifier';
 
 @Injectable()
-export class ClodunaryService {
+export class CloudinaryService {
     /**
      * Sube un archivo a Cloudinary
      * @params file - Archivo de Express Multer 
@@ -14,7 +14,7 @@ export class ClodunaryService {
     async uploadFile(
         file: Express.Multer.File,
         folder: string = 'objetos-aprendizaje'
-    ): Promise<String> {
+    ): Promise<string> {
         return new Promise((resolve, reject) => {
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
