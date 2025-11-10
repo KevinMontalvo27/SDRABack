@@ -16,12 +16,6 @@ export class ObjetosAprendizajeController extends GenericController<ObjetosApren
 
     @Post()
     async create(@Body() entity: ObjetosAprendizaje) {
-        const count = await this.objetosAprendizajeService.countByTemaId(entity.id_tema);
-        
-        if (count >= 3) {
-            throw new BadRequestException('Un tema no puede tener más de 3 objetos de aprendizaje');
-        }
-
         return this.objetosAprendizajeService.create(entity);
     }
 

@@ -17,6 +17,7 @@ import { MateriasModule } from './materias/materias.module';
 import { AdministradorModule } from './administrador/administrador.module';
 import { ConfigModule } from '@nestjs/config';
 import { UnidadesModule } from './unidades/unidades.module';
+import { CloudinaryModule } from './cloudinary/cloudinary.module';
 
 @Module({
   imports: [
@@ -39,6 +40,7 @@ import { UnidadesModule } from './unidades/unidades.module';
     MateriasModule,
     AdministradorModule,
     UnidadesModule,
+    CloudinaryModule,
   ],
   controllers: [AppController],
   providers: [AppService],
