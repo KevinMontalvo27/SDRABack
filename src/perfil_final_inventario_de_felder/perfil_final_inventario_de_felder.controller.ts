@@ -2,6 +2,7 @@ import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { GenericController } from 'src/generic/generic.controller';
 import { PerfilFinalInventarioDeFelder } from './perfil_final_inventario_de_felder.entity';
 import { PerfilFinalInventarioDeFelderService } from './perfil_final_inventario_de_felder.service';
+import { ResultadoRecomendacionDto } from './dto/recomendacion.dto';
 
 @Controller('perfil-final-inventario-de-felder')
 export class PerfilFinalInventarioDeFelderController extends GenericController<PerfilFinalInventarioDeFelder, PerfilFinalInventarioDeFelderService> {
@@ -39,6 +40,31 @@ export class PerfilFinalInventarioDeFelderController extends GenericController<P
   @Get('moda_estrategias/:num_grupo')
   async findModaEstrategiasBynumGrupo(@Param('num_grupo') numGrupo: number) {
     return this.perfilFinalInventarioDeFelderService.findModaEstrategiasByNumGrupo(numGrupo);
+  }
+
+   // ===== ENDPOINT DE RECOMENDACIÓN =====
+  
+  /**
+   * Recomienda objetos de aprendizaje para un tema específico
+   * basándose en el perfil del estudiante
+   * 
+   * GET /perfil-final-inventario-de-felder/recomendacion/:nroCuenta/tema/:idTema
+   * 
+   * Ejemplo: GET /perfil-final-inventario-de-felder/recomendacion/19104294/tema/1
+   * 
+   * @param nroCuenta - Número de cuenta del estudiante
+   * @param idTema - ID del tema para el cual se buscan recomendaciones
+   * @returns Objetos de aprendizaje compatibles con el perfil del estudiante
+   */
+  @Get('recomendacion/:nroCuenta/tema/:idTema')
+  async recomendarObjetosParaTema(
+    @Param('nroCuenta') nroCuenta: number,
+    @Param('idTema') idTema: number
+  ): Promise<ResultadoRecomendacionDto> {
+    return this.perfilFinalInventarioDeFelderService.recomendarObjetosParaTema(
+      Number(nroCuenta),
+      Number(idTema)
+    );
   }
 
   @Post('test')

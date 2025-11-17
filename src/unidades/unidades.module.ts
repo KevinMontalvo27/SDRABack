@@ -12,11 +12,14 @@ import { ObjetosAprendizajeService } from './services/objetos-aprendizaje.servic
 import { EstiloObjetoController } from './controllers/estilo-objeto.controller';
 import { EstiloObjetoService } from './services/estilo-objeto.service';
 import { EstiloObjeto } from './entities/estilo_objeto.entity';
+import { CloudinaryModule } from 'src/cloudinary/cloudinary.module';
 
 @Module({
-    imports: [TypeOrmModule.forFeature([Unidades, Temas, ObjetosAprendizaje, EstiloObjeto])],
+    imports: [TypeOrmModule.forFeature([Unidades, Temas, ObjetosAprendizaje, EstiloObjeto]),
+    CloudinaryModule],
     controllers: [UnidadesController, TemasController, ObjetosAprendizajeController, EstiloObjetoController],
     providers: [UnidadesService, TemasService, ObjetosAprendizajeService, EstiloObjetoService],
+    exports: [UnidadesService, TemasService, ObjetosAprendizajeService, EstiloObjetoService],
 
 })
 export class UnidadesModule {
