@@ -16,10 +16,12 @@ export class CloudinaryService {
         folder: string = 'objetos-aprendizaje'
     ): Promise<string> {
         return new Promise((resolve, reject) => {
+
+            const resourceType = this.getResourceType(file.mimetype, file.originalname);
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
                     folder: folder,
-                    resource_type: 'auto', //Detecta el tipo de archivo automáticamente
+                    resource_type: resourceType, //Detecta el tipo de archivo automáticamente
                     //Configuracion adicional para diferentes tipos de archivos
                     allowed_formats: ['jpg', 'png', 'pdf', 'mp4', 'mp3', 'docx', 'pptx', 'txt']
                 },
@@ -35,6 +37,49 @@ export class CloudinaryService {
             //Convertir el buffer del archivo a stream y subirlo
             streamifier.createReadStream(file.buffer).pipe(uploadStream);
         });
+    }
+
+    
+    /**
+     * Determina el resource_type correcto para Cloudinary
+     * @params mimetype - Tipo MIME del archivo
+     * @params filename - Nombre original del archivo
+     * @returns 'image' | 'video' | 'raw'
+     */
+    private getResourceType(mimetype: string, filename: string): 'image' | 'video' | 'raw' {
+        const extension = filename.split('.').pop()?.toLowerCase();
+        
+        // PDFs y documentos deben ser 'raw'
+        if (
+            mimetype === 'application/pdf' ||
+            extension === 'pdf' ||
+            mimetype.includes('document') ||
+            mimetype.includes('msword') ||
+            mimetype.includes('spreadsheet') ||
+            mimetype.includes('presentation') ||
+            ['doc', 'docx', 'ppt', 'pptx', 'xls', 'xlsx', 'txt', 'csv'].includes(extension || '')
+        ) {
+            return 'raw';
+        }
+        
+        // Videos
+        if (
+            mimetype.startsWith('video/') ||
+            ['mp4', 'webm', 'mov', 'avi', 'mkv'].includes(extension || '')
+        ) {
+            return 'video';
+        }
+        
+        // Imágenes
+        if (
+            mimetype.startsWith('image/') ||
+            ['jpg', 'jpeg', 'png', 'gif', 'webp', 'svg', 'bmp'].includes(extension || '')
+        ) {
+            return 'image';
+        }
+        
+        // Audio y otros archivos como 'raw'
+        return 'raw';
     }
 
     /**
@@ -61,4 +106,6 @@ export class CloudinaryService {
         const folder = parts[parts.length - 2];
         return `${folder}/${publicId}`;
     }
+
+    
 }
