@@ -1,8 +1,10 @@
-import { Controller, Body, Get, Post } from '@nestjs/common';
+import { Controller, Body, Get, Post, ParseIntPipe, Param } from '@nestjs/common';
 import { AlumnosService } from './alumnos.service';
 import { Alumnos } from './alumnos.entity';
 import { GenericController } from 'src/generic/generic.controller';
-
+import { CreateAlumnoDto } from './dtos/create-alumno.dto';
+import { UpdateAlumnoDto } from './dtos/update-alumno.dto';
+import { LoginAlumnoDto } from './dtos/login.dto';
 @Controller('alumnos')
 export class AlumnosController extends GenericController<Alumnos,AlumnosService>{
   constructor(private readonly alumnosService: AlumnosService) {
@@ -33,6 +35,38 @@ export class AlumnosController extends GenericController<Alumnos,AlumnosService>
 
     // Inicio de sesión exitoso
     return alumno;
+  }
+
+  /**
+   * GET /alumnos/nro-cuenta/:nroCuenta
+   * Obtener alumno por número de cuenta con sus cuestionarios
+   */
+  @Get('nro-cuenta/:nroCuenta')
+  async findByNroCuenta(@Param('nroCuenta', ParseIntPipe) nroCuenta: number) {
+    return this.alumnosService.findByNroCuenta(nroCuenta);
+  }
+
+  /**
+   * GET /alumnos/grupo/:grupo
+   * Obtener alumnos de un grupo
+   */
+  @Get('grupo/:grupo')
+  async findByGrupo(@Param('grupo', ParseIntPipe) grupo: number) {
+    return this.alumnosService.findByGrupo(grupo);
+  }
+
+
+  /**
+   * GET /alumnos/:nroCuenta/verificar-cuestionario
+   * Verificar si un alumno tiene el cuestionario asignado
+   */
+  @Get(':nroCuenta/verificar-cuestionario')
+  async verificarCuestionario(@Param('nroCuenta', ParseIntPipe) nroCuenta: number) {
+    const tieneAsignado = await this.alumnosService.verificarCuestionarioAsignado(nroCuenta);
+    return { 
+      nroCuenta,
+      tieneAsignado 
+    };
   }
 
 }

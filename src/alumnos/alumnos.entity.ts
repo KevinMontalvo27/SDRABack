@@ -1,6 +1,6 @@
 import { GenericEntity } from 'src/generic/generic.entity';
-import { Entity, Column, PrimaryGeneratedColumn } from 'typeorm';
-
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { AlumnosCuestionarios } from 'src/alumnos_cuestionarios/alumnos_cuestionarios.entity';
 @Entity()
 export class Alumnos extends GenericEntity {
   @PrimaryGeneratedColumn()
@@ -26,4 +26,7 @@ export class Alumnos extends GenericEntity {
 
   @Column({ type: 'int' })
   grupo: number;
+
+    @OneToMany(() => AlumnosCuestionarios, alumnosCuestionarios => alumnosCuestionarios.alumno)
+    alumnosCuestionarios: AlumnosCuestionarios[];
 }
