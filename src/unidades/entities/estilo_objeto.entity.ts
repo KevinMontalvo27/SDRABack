@@ -14,4 +14,11 @@ export class EstiloObjeto extends GenericEntity {
         default: () => "'[]'"
     })
     estilos: string[];
+
+    @Column({ 
+        type: 'varchar', 
+        length: 100,
+        nullable: true  // ← Permite NULL para registros existentes
+    })
+    tipo: string;
 }
