@@ -6,7 +6,7 @@ import { GenericService } from 'src/generic/generic.service';
 import { AlumnosCuestionariosService } from 'src/alumnos_cuestionarios/alumnos_cuestionarios.service';
 import { CreateAlumnoDto } from './dtos/create-alumno.dto';
 
-const CUESTIONARIO_DEFAULT_ID = 2; // ID del cuestionario a asignar automáticamente
+const CUESTIONARIO_DEFAULT_ID = 1; // ID del cuestionario a asignar automáticamente
 @Injectable()
 export class AlumnosService extends GenericService<Alumnos> {
   constructor(
