@@ -231,6 +231,7 @@ export class PerfilFinalInventarioDeFelderService extends GenericService<PerfilF
 
             objetosCompatibles.push({
               objeto,
+              estiloObjeto: objeto.estiloObjeto,
               compatibilidad,
               estilosCompatibles
             });

@@ -3,4 +3,5 @@ export class CreateTemaDto {
     nombre: string;
     descripcion?: string;
     numero_tema: number;
+    
 }

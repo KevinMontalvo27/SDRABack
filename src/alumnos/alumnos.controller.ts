@@ -69,5 +69,10 @@ export class AlumnosController extends GenericController<Alumnos,AlumnosService>
     };
   }
 
+  @Post('create-alumno')
+  async createAlumno(@Body() createAlumnoDto: CreateAlumnoDto): Promise<Alumnos> {
+    return this.alumnosService.crearAlumno(createAlumnoDto);
+  }
+
 }
 

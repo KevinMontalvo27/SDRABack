@@ -6,7 +6,7 @@ import { GenericService } from 'src/generic/generic.service';
 import { AlumnosCuestionariosService } from 'src/alumnos_cuestionarios/alumnos_cuestionarios.service';
 import { CreateAlumnoDto } from './dtos/create-alumno.dto';
 
-const CUESTIONARIO_DEFAULT_ID = 1; // ID del cuestionario a asignar automáticamente
+const CUESTIONARIO_DEFAULT_ID = 2; // ID del cuestionario a asignar automáticamente
 @Injectable()
 export class AlumnosService extends GenericService<Alumnos> {
   constructor(
@@ -38,17 +38,17 @@ export class AlumnosService extends GenericService<Alumnos> {
     const nuevoAlumno = this.alumnosRepository.create(createAlumnoDto);
     const alumnoGuardado = await this.alumnosRepository.save(nuevoAlumno);
 
-    // 3. ✨ Asignar cuestionario automáticamente
+    // 3. Asignar cuestionario automáticamente
     try {
       await this.alumnosCuestionariosService.asignarCuestionario(
         alumnoGuardado.nro_cuenta,
         CUESTIONARIO_DEFAULT_ID
       );
       console.log(
-        `✅ Cuestionario ${CUESTIONARIO_DEFAULT_ID} asignado automáticamente al alumno ${alumnoGuardado.nro_cuenta}`
+        `Cuestionario ${CUESTIONARIO_DEFAULT_ID} asignado automáticamente al alumno ${alumnoGuardado.nro_cuenta}`
       );
     } catch (error) {
-      console.error('⚠️ Error al asignar cuestionario:', error.message);
+      console.error('Error al asignar cuestionario:', error.message);
       // No fallar la creación del alumno si falla la asignación
       // El cuestionario se puede asignar manualmente después
     }
