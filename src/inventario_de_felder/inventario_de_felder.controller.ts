@@ -27,6 +27,12 @@ export class InventarioDeFelderController extends GenericController<InventarioDe
 
     @Post('resultado-encuesta')
     async saveResultadoEncuesta(@Body() respuestasCompactadasDto: RespuestasCompactadasDto) {
-        return this.inventarioDeFelderService.saveResultadoEncuesta(respuestasCompactadasDto) && this.inventarioDeFelderService.savePerfilfinal(respuestasCompactadasDto);
+        await this.inventarioDeFelderService.saveResultadoEncuesta(respuestasCompactadasDto);
+        const perfil = await this.inventarioDeFelderService.savePerfilfinal(respuestasCompactadasDto);
+        
+        return {
+            message: 'Encuesta completada exitosamente',
+            perfil
+        };
     }
 }

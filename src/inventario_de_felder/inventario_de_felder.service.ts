@@ -7,6 +7,7 @@ import { RespuestasCompactadasDto } from './dto/respuestas_compactadas.dto';
 import { PerfilFinalInventarioDeFelder } from 'src/perfil_final_inventario_de_felder/perfil_final_inventario_de_felder.entity';
 import { ModeloFelder } from './inventario_de_felder.model';
 import { EstrategiaEnsenanzaService } from 'src/estrategias_enseñanza/estrategias_enseñanza.service';
+import { AlumnosCuestionariosService } from 'src/alumnos_cuestionarios/alumnos_cuestionarios.service';
 
 @Injectable()
 export class InventarioDeFelderService extends GenericService<InventarioDeFelder>{
@@ -15,7 +16,8 @@ export class InventarioDeFelderService extends GenericService<InventarioDeFelder
         private readonly InventarioDeFelderRepository: Repository<InventarioDeFelder>,
         @InjectRepository(PerfilFinalInventarioDeFelder)
         private readonly perfilFinalRepository: Repository<PerfilFinalInventarioDeFelder>,
-        private readonly estrategiaEnseñanzaService: EstrategiaEnsenanzaService
+        private readonly estrategiaEnseñanzaService: EstrategiaEnsenanzaService,
+        private readonly alumnosCuestionariosService: AlumnosCuestionariosService,
     ){
         super(InventarioDeFelderRepository);
     }
@@ -26,18 +28,34 @@ export class InventarioDeFelderService extends GenericService<InventarioDeFelder
 
     async saveResultadoEncuesta(resultadoEncuestaDto: RespuestasCompactadasDto): Promise<InventarioDeFelder> {
         // revisar si existe ese registro
-        const existingResponse = await this.InventarioDeFelderRepository.findOne({ where: { nro_cuenta: resultadoEncuestaDto.nro_cuenta } });
+        const existingResponse = await this.InventarioDeFelderRepository
+        .findOne({ 
+            where: { nro_cuenta: resultadoEncuestaDto.nro_cuenta } 
+        });
+
+        let savedResponse: InventarioDeFelder;
 
         if (existingResponse) {
             existingResponse.respuestas_compactadas = resultadoEncuestaDto.respuestas_compactadas;
             existingResponse.grupo = resultadoEncuestaDto.grupo;
             await this.InventarioDeFelderRepository.save(existingResponse);
-            return existingResponse;
-            
+            savedResponse = await this.InventarioDeFelderRepository.save(existingResponse);
         } else {
             const newResponse = this.InventarioDeFelderRepository.create(resultadoEncuestaDto);
-            return this.InventarioDeFelderRepository.save(newResponse);
+            savedResponse = await this.InventarioDeFelderRepository.save(newResponse);
         }
+
+        try {
+            await this.alumnosCuestionariosService.marcarCompletado(
+                resultadoEncuestaDto.nro_cuenta, 
+                1 // ID del cuestionario por defecto
+            );
+            console.log(`Cuestionario marcado como completado para alumno ${resultadoEncuestaDto.nro_cuenta}`);
+        } catch (error) {
+            console.error('Error al marcar cuestionario completado:', error.message);
+        }
+
+        return savedResponse;
     }
 
     async savePerfilfinal(resultadoEncuestaDto: RespuestasCompactadasDto): Promise<PerfilFinalInventarioDeFelder> {

@@ -24,4 +24,10 @@ export class Temas extends GenericEntity {
     @ManyToOne(() => Unidades, unidad => unidad.temas)
     @JoinColumn({ name: 'id_unidad', referencedColumnName: 'id' })
     unidad: Unidades;
+
+    @Column({ 
+        type: 'json',
+        nullable: true  // ← Permite NULL, sin default
+    })
+    subtemas: string[];
 }

@@ -1,7 +1,7 @@
 import { GenericEntity } from 'src/generic/generic.entity';
 import { Entity, Column, PrimaryGeneratedColumn, OneToMany, JoinColumn, Index, ManyToOne} from 'typeorm';
 import { Preguntas } from '../preguntas/preguntas.entity';
-import { Grupos } from 'src/grupos/grupos.entity';
+import { AlumnosCuestionarios } from 'src/alumnos_cuestionarios/alumnos_cuestionarios.entity';
 
 @Entity()
 export class Cuestionarios extends GenericEntity{
@@ -21,13 +21,12 @@ export class Cuestionarios extends GenericEntity{
   @Column({ type: 'varchar' })
   descripcion: string;
 
-  // Relación con la entidad Grupos
-  @OneToMany(() => Grupos, grupo => grupo.cuestionario)
-  @JoinColumn({ name: 'id_cuestionario', referencedColumnName: 'id_cuestionario' })
-  grupos: Grupos[];
-  
+
   // Relación con la entidad Preguntas
   @OneToMany(() => Preguntas, pregunta => pregunta.cuestionario)
   @JoinColumn({ name: 'id_cuestionario' })
   preguntas: Preguntas[];
+
+  @OneToMany(() => AlumnosCuestionarios, alumnosCuestionarios => alumnosCuestionarios.cuestionario)
+  alumnosCuestionarios: AlumnosCuestionarios[];
 }
