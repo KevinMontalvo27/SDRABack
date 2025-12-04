@@ -4,5 +4,4 @@ export class CreateObjetoAprendizajeDto {
     nombre: string;
     descripcion?: string;
     url?: string;
-    orden: number;
 }
