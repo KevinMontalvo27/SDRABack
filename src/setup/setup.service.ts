@@ -9,6 +9,7 @@
     constructor(private readonly configService: ConfigService) {}
       
       createTypeOrmOptions(): TypeOrmModuleOptions {
+        const isProduction = this.configService.get<string>('NODE_ENV') === 'production';
         return {
           type: 'mysql',
           host: this.configService.get<string>('DB_HOST'),
@@ -18,6 +19,10 @@
           database: this.configService.get<string>('DB_NAME'),
           entities: [__dirname + '/../**/*.entity{.ts,.js}'],
           synchronize: false,
+          ssl: isProduction ? { rejectUnauthorized: false } : false,
+          extra: {
+            connectionLimit: 35,
+          },
         };
       }
     }
