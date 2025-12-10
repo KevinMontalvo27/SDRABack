@@ -39,6 +39,7 @@ export class ProfesorService extends GenericService<Profesor> {
     const info = new ProfesorDTO();
     info.id_profesor = profesor.id_profesor;
     info.nombre_profesor = profesor.nombre_profesor;
+    info.grupo = profesor.grupo;
 
     return info;
   }
