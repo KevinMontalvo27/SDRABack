@@ -20,5 +20,12 @@ export class MateriasService extends GenericService<Materia> {
       order: { nombre: 'ASC' },
     });
   }
+
+  async findMateriasByProfesor(id_profesor: string): Promise<Materia[]> {
+    return this.materiasRepository.find({
+      where: { id_profesor: id_profesor },
+      order: { nombre: 'ASC' },
+    });
+  }    
 }
 
