@@ -13,4 +13,9 @@ export class MateriasController extends GenericController<Materia, MateriasServi
   async getMateriasByGrupo(@Param('grupo') grupo: number): Promise<Materia[]> {
     return this.materiasService.findMateriasByGrupo(grupo);
   }
+
+  @Get('profesor/:id_profesor')
+  async getMateriasByProfesor(@Param('id_profesor') id_profesor: string): Promise<Materia[]> {
+    return this.materiasService.findMateriasByProfesor(id_profesor);
+  }
 }
