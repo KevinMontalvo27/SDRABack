@@ -10,6 +10,7 @@ import {
     QueryPartialEntity,
   } from 'typeorm/query-builder/QueryPartialEntity';
   import { GenericEntity } from './generic.entity';
+import { NotFoundException } from '@nestjs/common';
   
   export abstract class GenericService<Entity extends GenericEntity> {
     constructor(private readonly repository: Repository<Entity>) {}
@@ -34,6 +35,9 @@ import {
   
     async update(id, entity: any) {
       const info = await this.repository.findOne({ where: { id } });
+      if (!info) {
+        throw new NotFoundException(`Registro con id ${id} no encontrado`);
+      }
       this.repository.merge(info, entity);
       return this.repository.save(info);
     }
