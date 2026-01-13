@@ -16,6 +16,6 @@ import {
     deleted: Date;
   
     @UpdateDateColumn()
-    update: Date;
+    updated: Date;
   }
   
