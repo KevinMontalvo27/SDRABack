@@ -36,7 +36,7 @@ import {
     @Put(':id')
     @Patch(':id')
     async update(@Param('id') id: number, @Body() entity: Entity) {
-      if (id != entity.id) return;
+      //if (id != entity.id) return;
       return this.service.update(id, entity);
     }
   
