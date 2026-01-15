@@ -27,7 +27,27 @@ export class Temas extends GenericEntity {
 
     @Column({ 
         type: 'json',
-        nullable: true  // ← Permite NULL, sin default
+        nullable: false,  
+        default: () => "'[]'",  
+        transformer: {
+            to: (value: string[] | null): string => {
+                if (!value || (Array.isArray(value) && value.length === 0)) {
+                    return '[]';
+                }
+                return JSON.stringify(value);
+            },
+            from: (value: string | null): string[] => {
+                if (!value || value === '' || value === 'null') {
+                    return [];
+                }
+                try {
+                    return typeof value === 'string' ? JSON.parse(value) : value;
+                } catch (error) {
+                    console.error('Error parsing subtemas:', error);
+                    return [];
+                }
+            }
+        }
     })
     subtemas: string[];
 }
