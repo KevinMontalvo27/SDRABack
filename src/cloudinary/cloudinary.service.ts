@@ -2,6 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { UploadApiErrorResponse, UploadApiResponse, v2 as cloudinary } from 'cloudinary';
 import * as streamifier from 'streamifier';
 
+export interface CloudinaryUploadResult {
+    url: string;
+    public_id: string;
+    resource_type: string;
+    format: string;
+}
 @Injectable()
 export class CloudinaryService {
     /**
@@ -14,13 +20,15 @@ export class CloudinaryService {
     async uploadFile(
         file: Express.Multer.File,
         folder: string = 'objetos-aprendizaje'
-    ): Promise<string> {
+    ): Promise<CloudinaryUploadResult> {
         return new Promise((resolve, reject) => {
 
             const resourceType = this.getResourceType(file.mimetype, file.originalname);
             const uploadStream = cloudinary.uploader.upload_stream(
                 {
                     folder: folder,
+                    quality: 'auto',
+                    fetch_format: 'auto',
                     resource_type: resourceType, //Detecta el tipo de archivo automáticamente
                     //Configuracion adicional para diferentes tipos de archivos
                     allowed_formats: ['jpg', 'png', 'pdf', 'mp4', 'mp3', 'docx', 'pptx', 'txt']
@@ -29,7 +37,12 @@ export class CloudinaryService {
                     if (error) {
                         return reject(error);
                     } else {
-                        resolve(result.secure_url);
+                        resolve({
+                            url: result.secure_url,
+                            public_id: result.public_id,
+                            resource_type: result.resource_type,
+                            format: result.format
+                        });
                     }
                 }
             );
@@ -86,9 +99,9 @@ export class CloudinaryService {
      * Elimina un archivo de Cloudinary usando su public_id
      * @params publicId - ID público del archivo en Cloudinary
      */
-    async deleteFile(publicId: string): Promise<void> {
+    async deleteFile(publicId: string, resourceType: 'image' | 'video' | 'raw' = 'raw'): Promise<void> {
         try{
-            await cloudinary.uploader.destroy(publicId);
+            await cloudinary.uploader.destroy(publicId, { resource_type: resourceType });
         } catch (error) {
             throw new Error(`Error al eliminar el archivo: ${error.message}`);
         }
@@ -107,5 +120,18 @@ export class CloudinaryService {
         return `${folder}/${publicId}`;
     }
 
-    
+    /**
+     * Genera una URL que fuerza la descarga del archivo
+     * @params publicId - ID público del archivo
+     * @params resourceType - 'image' | 'video' | 'raw'
+     * @returns URL de descarga con el flag de attachment
+     */
+    getDownloadUrl(publicId: string, resourceType: string = 'raw'): string {
+        return cloudinary.url(publicId, {
+            resource_type: resourceType,
+            flags: 'attachment', 
+            secure: true
+        });
+    }
+
 }
