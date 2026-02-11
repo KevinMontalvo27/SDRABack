@@ -23,6 +23,9 @@ export class ObjetosAprendizaje extends GenericEntity {
     @Column({type: 'varchar'})
     contenido: string;
 
+    @Column({type: 'varchar', nullable: true})
+    cloudinary_public_id: string;
+
     // Relación con Tema
     @ManyToOne(() => Temas)
     @JoinColumn({ name: 'id_tema', referencedColumnName: 'id' })
